@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Youth Memorial Van Damme</title>
+  <style>
+    @font-face {
+    font-family: Bebas;
+    src: url(BebasNeue-Regular.otf);
+    }
+    @font-face {
+    font-family: 'Trebuc';
+    src: url(trebuc.ttf);
+    font-style: normal;
+    font-weight: 400;
+    }
+    @font-face {
+    font-family: 'Trebuc';
+    src: url(trebucbd.ttf);
+    font-weight: 700;
+    font-style: normal;
+    }
+    h2 {
+      font-family: Trebuc;
+      font-size: small;
+    }
+    .centered {
+      text-align: center;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 4px 8px;
+      font-family: Trebuc;
+    }
+    table {
+      margin-top: 1em;
+      width: 100%;
+      display: none;
+    }
+    .top16 {
+  background-color: #f0b8d1; 
+  font-weight: 700;
+    }
+    button {
+      margin-right: 10px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+<header style="width: 100%; background-color: #002B88; padding: 15px 0; box-sizing: border-box;">
+  <h1 style="color: white; text-align: center; margin: 0; font-family: Bebas;">
+    YOUTH MEMORIAL VAN DAMME
+  </h1>
+  
+</header>
+<hr style="border: none; height: 5px; background-color: #ec3385; margin: 0;">
+
+<h2>
+  Données venant des listes 800m et 1500m pour les qualifications du Van Damme 2025 <br>
+  Les données mettent bien quelques minutes à se mettre à jour <br>
+  C'est pas officiel c'est de la récupération de données <br>
+  Les 16 premiers sont repris
+</h2>
+
+
+<button id="load-btn" style="margin : 10px 0 0 0;"> Charger les données</button>
+<button id="update-btn" style="margin : 10px 0 0 0;">Mettre à jour les données</button>
+
+<table id="result-table">
+  <thead style=" background-color: #002B88;color: white;">
+    <tr>
+      <th>Place </th>
+      <th>Athlète</th>
+      <th>Points</th>
+      <th>Épreuve</th>
+      <th>Performance</th>
+      <th>Club</th>
+      <th>Année de naissance</th>
+      <th>Date de la perf</th>
+      <th>Lieu de la perf</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Lignes dynamiquement générées -->
+  </tbody>
+</table>
+
+<script>
+const loadBtn = document.getElementById('load-btn');
+const updateBtn = document.getElementById('update-btn');
+const table = document.getElementById('result-table');
+const tbody = table.querySelector('tbody');
+
+async function fetchClassement(update = false) {
+  const url = update
+    ? 'https://youthmvd.onrender.com/YouthMemorialDemiFond?update=true'
+    : 'https://youthmvd.onrender.com/YouthMemorialDemiFond';
+
+  const btn = update ? updateBtn : loadBtn;
+  btn.disabled = true;
+  btn.textContent = update ? 'Mise à jour...' : 'Chargement...';
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Erreur réseau');
+
+    const data = await response.json();
+    console.log('Données reçues:', data);
+
+    tbody.innerHTML = '';
+    data.forEach((row,i) => {
+      const tr = document.createElement('tr');
+      const tdPlace = document.createElement('td');
+      tdPlace.textContent = i+1;
+      tdPlace.classList.add('centered','bold');
+      tr.appendChild(tdPlace);
+
+      ['athlete', 'points', 'epreuve', 'prestation', 'club', 'annee_naissance', 'date', 'lieu'].forEach(key => {
+        const td = document.createElement('td');
+        td.textContent = row[key];
+        tr.appendChild(td);
+      });
+
+      if (i < 16) {
+    tr.classList.add('top16'); 
+  }
+
+      tbody.appendChild(tr);
+    });
+
+    table.style.display = 'table';
+
+  } catch (error) {
+    alert('Erreur : ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = update ? 'Mettre à jour les données' : 'Charger les données';
+  }
+}
+
+loadBtn.addEventListener('click', () => fetchClassement(false));
+updateBtn.addEventListener('click', () => fetchClassement(true));
+</script>
+
+</body>
+</html>

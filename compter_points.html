@@ -56,16 +56,89 @@
   <h1 style="color: white; text-align: center; margin: 0; font-family: Bebas;">
     YOUTH MEMORIAL VAN DAMME
   </h1>
-  
 </header>
 <hr style="border: none; height: 5px; background-color: #ec3385; margin: 0;">
 
 <button onclick="window.location.href='index.html'" style="margin : 10px 0 0 0;">Voir le classement</button>
   
-<h2>
-  Données venant des listes 800m et 1500m pour les qualifications du Van Damme 2025 <br>
-  Si le bouton chargement met du temps c'est qu'il faut rallumer le serveur, il s'éteint quand il y a pas d'activité <br>
-  Les données mettent bien quelques minutes à se mettre à jour <br>
-  C'est pas officiel c'est de la récupération de données <br>
-  Les 16 premiers sont repris
-</h2>
+  <h2>Nombre de points pour réaliser une performance <br> Tables de cotations WA</h2>
+
+  <form id="perfForm">
+    <label>Gender:
+      <select name="gender">
+        <option value="men">Men</option>
+        <option value="women">Women</option>
+      </select>
+    </label><br><br>
+
+    <label>Outdoor / Indoor:
+      <select name="event_type">
+        <option value="Outdoor">Outdoor</option>
+        <option value="Indoor">Indoor</option>
+      </select>
+    </label><br><br>
+
+    <label>Category:
+      <select name="event_cat">
+        <option value="Sprint">Sprint</option>
+        <option value="Middle Distance">Middle Distance</option>
+        <option value="Long Distance">Long Distance</option>
+        <option value="Hurdles">Hurdles</option>
+        <option value="Jump">Jump</option>
+        <option value="Throw">Throw</option>
+        <option value="Relays">Relays</option>
+        <option value="Combined">Combined Event</option>
+        <option value="Road">Road</option>
+        <option value="Road Walk">Road Walk</option>
+        <option value="Track Walk">Track Walk</option>
+      </select>
+    </label><br><br>
+
+    <label>Event:
+      <select name="event">
+      </select>
+    </label><br><br>
+
+    <label>Points:
+      <input type="text" name="points" required>
+    </label><br><br>
+
+    <input type="submit" value="Calculer la perf">
+  </form>
+
+  <h3 id="result"></h3>
+
+  <script>
+    const form = document.getElementById("points");
+    const result = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch("  'https://youthmvd.onrender.com/FromPoints'", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error("Erreur lors de la requête.");
+        }
+
+        const resultData = await response.json();
+        result.innerText = `Points: ${resultData.points}`;
+      } catch (error) {
+        console.error("Erreur:", error);
+        result.innerText = "Une erreur est survenue.";
+      }
+    });
+  </script>
+</body>
+</html>
+

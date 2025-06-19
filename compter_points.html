@@ -125,7 +125,7 @@
     const cat = document.getElementById("event_cat").value;
 
     try {
-      const response = await fetch(`https://youthmvd.onrender.com/get_events?event_type=${type}&event_cat=${cat}`);
+      const response = await fetch(`https://youthmvd.onrender.com/get_events?event_type=${type}&event_cat=${cat}&gender=${gender}`);
       const events = await response.json();
 
       const eventSelect = document.getElementById("eventSelect");

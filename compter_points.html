@@ -118,6 +118,7 @@
 <script>
   const form = document.getElementById("perfForm");
   const result = document.getElementById("result");
+  window.addEventListener("DOMContentLoaded", updateEvents);
 
   async function updateEvents() {
     const gender = document.getElementById("gender").value;
@@ -131,12 +132,12 @@
       const eventSelect = document.getElementById("eventSelect");
       eventSelect.innerHTML = "";
 
-      for (const [db_name, display_name] of events) {
-        const option = document.createElement("option");
-        option.value = db_name;
-        option.textContent = display_name;
-        eventSelect.appendChild(option);
-      }
+      for (const event of events) {
+          const option = document.createElement("option");
+          option.value = event.nom_db;
+          option.textContent = event.nom_display;
+          eventSelect.appendChild(option);
+        }
     } catch (error) {
       console.error("Erreur lors du chargement des épreuves:", error);
     }

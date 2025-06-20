@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Youth Memorial Van Damme</title>
+  <style>
+    @font-face {
+      font-family: Bebas;
+      src: url(BebasNeue-Regular.otf);
+    }
+    @font-face {
+      font-family: 'Trebuc';
+      src: url(trebuc.ttf);
+      font-style: normal;
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'Trebuc';
+      src: url(trebucbd.ttf);
+      font-weight: 700;
+      font-style: normal;
+    }
+    h2 {
+      font-family: Trebuc;
+      font-size: medium;
+    }
+    label{
+      font-family: Trebuc;
+    }
+    option{
+      font-family: Trebuc;
+    }
+    select{
+      font-family: Trebuc;
+    }
+    .centered {
+      text-align: center;
+    }
+    .bold {
+      font-weight: bold;
+    }
+    table, th, td {
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 4px 8px;
+      font-family: Trebuc;
+    }
+    table {
+      margin-top: 1em;
+      width: 100%;
+      display: none;
+    }
+    .top16 {
+      background-color: #f0b8d1;
+      font-weight: 700;
+    }
+    button {
+      margin-right: 10px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+<header style="width: 100%; background-color: #002B88; padding: 15px 0; box-sizing: border-box;">
+  <h1 style="color: white; text-align: center; margin: 0; font-family: Bebas;">
+    YOUTH MEMORIAL VAN DAMME
+  </h1>
+</header>
+<hr style="border: none; height: 5px; background-color: #ec3385; margin: 0;">
+
+<button onclick="window.location.href='index.html'" style="margin : 10px 0 0 0;">Voir le classement</button>
+<button onclick="window.location.href='compter_points.html'" style="margin : 10px 0 0 0;">Voir la perf</button>
+
+<h2>Tables de cotations WA <br> Performances vers points</h2>
+
+<form id="perfForm">
+  <label>Gender:
+    <select name="gender" id="gender">
+      <option value="men">Men</option>
+      <option value="women">Women</option>
+    </select>
+  </label><br><br>
+
+  <label>Outdoor / Indoor:
+    <select name="event_type" id="event_type">
+      <option value="Outdoor">Outdoor</option>
+      <option value="Indoor">Indoor</option>
+    </select>
+  </label><br><br>
+
+  <label>Category:
+    <select name="event_cat" id="event_cat">
+      <option value="Sprint">Sprint</option>
+      <option value="Middle Distance">Middle Distance</option>
+      <option value="Long Distance">Long Distance</option>
+      <option value="Hurdles">Hurdles</option>
+      <option value="Jump">Jump</option>
+      <option value="Throw">Throw</option>
+      <option value="Relays">Relays</option>
+      <option value="Combined">Combined Event</option>
+      <option value="Road">Road</option>
+      <option value="Road Walk">Road Walk</option>
+      <option value="Track Walk">Track Walk</option>
+    </select>
+  </label><br><br>
+
+  <label>Event:
+    <select name="event" id="eventSelect">
+      <option value="">Sélectionnez une épreuve</option>
+    </select>
+  </label><br><br>
+
+  <label>Perf:
+    <input  name="perf" id="perf"  required>
+  </label><br><br>
+
+  <input type="submit" value="Calculer les points">
+</form>
+
+<h2 id="result"></h2>
+
+<script>
+  const form = document.getElementById("perfForm");
+  const result = document.getElementById("result");
+
+  async function updateEvents() {
+    const gender = document.getElementById("gender").value;
+    const type = document.getElementById("event_type").value;
+    const cat = document.getElementById("event_cat").value;
+
+    try {
+      const response = await fetch(`https://youthmvd.onrender.com/get_events?event_type=${type}&event_cat=${cat}&gender=${gender}`);
+      const events = await response.json();
+
+      const eventSelect = document.getElementById("eventSelect");
+      eventSelect.innerHTML = "";
+
+      for (const event of events) {
+          const option = document.createElement("option");
+          option.value = event.nom_db;
+          option.textContent = event.nom_display;
+          eventSelect.appendChild(option);
+        }
+    } catch (error) {
+      console.error("Erreur lors du chargement des épreuves:", error);
+    }
+  }
+
+  // Mettre à jour la liste si on change les filtres
+  document.getElementById("gender").addEventListener("change", updateEvents);
+  document.getElementById("event_type").addEventListener("change", updateEvents);
+  document.getElementById("event_cat").addEventListener("change", updateEvents);
+  window.addEventListener("DOMContentLoaded", updateEvents);
+
+  // Envoie du formulaire
+  form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+
+  const gender = formData.get("gender");
+  const event = document.getElementById("eventSelect").value;
+  const perf = formData.get("perf");
+
+  try {
+    const response = await fetch("https://youthmvd.onrender.com/FromPerf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        gender,
+        event,
+        perf
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Erreur lors de la requête.");
+    }
+
+    const resultData = await response.json();
+    result.innerText = `Performance : ${resultData.performance}`;
+  } catch (error) {
+    console.error("Erreur:", error);
+    result.innerText = "Une erreur est survenue.";
+  }
+});
+
+</script>
+</body>
+</html>

@@ -118,7 +118,6 @@
 <script>
   const form = document.getElementById("perfForm");
   const result = document.getElementById("result");
-  window.addEventListener("DOMContentLoaded", updateEvents);
 
   async function updateEvents() {
     const gender = document.getElementById("gender").value;
@@ -147,6 +146,7 @@
   document.getElementById("gender").addEventListener("change", updateEvents);
   document.getElementById("event_type").addEventListener("change", updateEvents);
   document.getElementById("event_cat").addEventListener("change", updateEvents);
+  window.addEventListener("DOMContentLoaded", updateEvents);
 
   // Envoie du formulaire
   form.addEventListener("submit", async (e) => {

@@ -180,7 +180,7 @@
     }
 
     const resultData = await response.json();
-    result.innerText = `Performance : ${resultData.performance}`;
+    result.innerText = `Points : ${resultData.points}`;
   } catch (error) {
     console.error("Erreur:", error);
     result.innerText = "Une erreur est survenue.";

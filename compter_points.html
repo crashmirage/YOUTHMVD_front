@@ -30,6 +30,9 @@
     option{
       font-family: Trebuc;
     }
+    select{
+      font-family: Trebuc;
+    }
     .centered {
       text-align: center;
     }
@@ -66,6 +69,7 @@
 <hr style="border: none; height: 5px; background-color: #ec3385; margin: 0;">
 
 <button onclick="window.location.href='index.html'" style="margin : 10px 0 0 0;">Voir le classement</button>
+<button onclick="window.location.href='fromperf.html'" style="margin : 10px 0 0 0;">Via la perf</button>
 
 <h2>Tables de cotations WA <br> Points vers performance</h2>
 
@@ -113,7 +117,7 @@
   <input type="submit" value="Calculer la perf">
 </form>
 
-<h3 id="result"></h3>
+<h2 id="result"></h2>
 
 <script>
   const form = document.getElementById("perfForm");
@@ -152,7 +156,7 @@
   form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const formData = new FormData(form); // ← cette ligne manquait
+  const formData = new FormData(form);
 
   const gender = formData.get("gender");
   const event = document.getElementById("eventSelect").value;
